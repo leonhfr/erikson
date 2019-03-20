@@ -1,0 +1,71 @@
+{
+  "name": "@scenicroutes/erikson",
+  "version": "0.0.0",
+  "description": "Erikson: Where to explore? for Scenic Routes",
+  "scripts": {
+    "build": "tsc",
+    "clean": "rimraf build",
+    "deploy": "npm run clean && npm run build && serverless deploy",
+    "sls": "npx serverless",
+    "ci": "jest --ci none --testPathPattern='src/' --detectOpenHandles --forceExit true --maxWorkers 2 --collectCoverage",
+    "pretest": "tsc -p tsconfig.test.json",
+    "test": "jest src --collectCoverage"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/scenicroutes/erikson,git"
+  },
+  "bugs": {
+    "url": "https://github.com/scenicroutes/erikson/issues"
+  },
+  "homepage": "https://github.com/scenicroutes/erikson#readme",
+  "author": {
+    "name": "Leon Hollender",
+    "email": "hello@leonh.fr"
+  },
+  "license": "GPL-3.0-only",
+  "dependencies": {
+    "debug": "^4.0.1",
+    "tslib": "^1.9.3"
+  },
+  "devDependencies": {
+    "@types/debug": "0.0.31",
+    "@types/jest": "^23.3.12",
+    "@types/node": "^10.12.0",
+    "jest": "^23.6.0",
+    "prettier": "^1.15.3",
+    "rimraf": "^2.6.2",
+    "ts-jest": "^23.10.5",
+    "ts-node": "^7.0.1",
+    "typescript": "^3.2.2"
+  },
+  "jest": {
+    "coveragePathIgnorePatterns": [
+      "<rootDir>/node_modules/",
+      "<rootDir>/src/mocks"
+    ],
+    "transform": {
+      "^.+\\.tsx?$": "ts-jest"
+    },
+    "testRegex": "(/__tests__/.*|(\\.|/)(test|spec))\\.(jsx?|tsx?)$",
+    "moduleFileExtensions": [
+      "ts",
+      "tsx",
+      "js",
+      "jsx",
+      "json"
+    ],
+    "testPathIgnorePatterns": [
+      "<rootDir>/build/",
+      "<rootDir>/node_modules/"
+    ],
+    "coverageThreshold": {
+      "global": {
+        "branches": 100,
+        "functions": 100,
+        "lines": 100,
+        "statements": 100
+      }
+    }
+  }
+}

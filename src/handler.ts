@@ -9,7 +9,7 @@ const debugError = debug('cartier:error:scheduler');
 const debugVerbose = debug('cartier:verbose:scheduler');
 
 export const main = async (
-  event: AWSLambda.ScheduledEvent,
+  event: { area: string }, // Area ID to divide
   context: AWSLambda.Context,
   callback: AWSLambda.Callback
 ) => {

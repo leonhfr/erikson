@@ -38,6 +38,14 @@ export const main = async (
 
     debugVerbose(`area to divide: %o`, area);
 
+    // concave hull
+
+    // rectangle decomposition
+
+    // make zones for rectangles
+
+    // make zones for polygons
+
     // First we divide it using the areaDivider
     // We have squares of the minimum dimension
 

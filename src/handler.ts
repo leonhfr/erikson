@@ -1,6 +1,7 @@
 // Packages.
 import * as AWSLambda from 'aws-lambda';
 import * as debug from 'debug';
+import { Eratosthenes } from '@scenicroutes/eratosthenes';
 
 // Internal.
 
@@ -17,12 +18,25 @@ export const main = async (
     debugVerbose(`event: %j`, event);
     debugVerbose(`context: %j`, context);
 
-    // List Areas
-    // Select the one whose ID match
+    if (!event.area || typeof event.area !== 'string') {
+      throw new Error('area must be provided and must be a string');
+    }
 
-    // Check if it is an Area, check if it has already been computed
+    const areaList = await Eratosthenes.AreaModel.list();
 
-    // We have an Area
+    if (areaList instanceof Error) {
+      throw areaList;
+    }
+
+    const maybeArea = areaList.ok.filter(area => area.id === event.area);
+
+    if (maybeArea.length !== 1) {
+      throw new Error('area not found');
+    }
+
+    const area = maybeArea[0];
+
+    debugVerbose(`area to divide: %o`, area);
 
     // First we divide it using the areaDivider
     // We have squares of the minimum dimension

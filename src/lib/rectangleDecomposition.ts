@@ -8,7 +8,7 @@ import * as turfHelpers from '@turf/helpers';
 // Code.
 export const rectangleDecomposition = (
   polygon: turfHelpers.Feature<turfHelpers.Polygon>
-) => {
+): Array<turfHelpers.BBox> => {
   const coordinates = polygon.geometry.coordinates[0]
     .slice(0, -1)
     .map(a => a.map(n => Math.round(100 * n)));

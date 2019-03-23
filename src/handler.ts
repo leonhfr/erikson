@@ -3,6 +3,7 @@ import * as AWSLambda from 'aws-lambda';
 import * as debug from 'debug';
 import { Eratosthenes } from '@scenicroutes/eratosthenes';
 import * as Wittgenstein from '@scenicroutes/wittgenstein';
+import * as turfHelpers from '@turf/helpers';
 import * as turfInvariant from '@turf/invariant';
 import { v4 as uuid } from 'uuid';
 
@@ -10,6 +11,7 @@ import { v4 as uuid } from 'uuid';
 import { areaDivider } from './lib/areaDivider';
 import { getBoundingBox } from './lib/getBoundingBox';
 import { makeInsidePolygon } from './lib/makeInsidePolygon';
+import { rectangleDecomposition } from './lib/rectangleDecomposition';
 
 // Code.
 const debugError = debug('erikson:error:handler');
@@ -104,12 +106,31 @@ export const main = async (
 
     // Rectangle decomposition
 
-    // make zones for rectangles
-    // put to db
+    const boxes = rectangleDecomposition(insidePolygon as turfHelpers.Feature<
+      turfHelpers.Polygon
+    >);
+
+    const insideZonesPromises = boxes.map(async box => {
+      const maybeZone = Wittgenstein.Zone.create({
+        id: uuid(),
+        area,
+        bbox: box,
+      });
+
+      if (maybeZone instanceof Error) {
+        debugError(`fail to build a zone: %o`, maybeZone);
+        return maybeZone;
+      }
+
+      return await Eratosthenes.ZoneModel.put(maybeZone);
+    });
 
     // Awaiting saving before exiting
 
-    const putResponses = await Promise.all([...borderZonesPromises]);
+    const putResponses = await Promise.all([
+      ...insideZonesPromises,
+      ...borderZonesPromises,
+    ]);
 
     putResponses.forEach(response => {
       if (response instanceof Error) {

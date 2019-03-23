@@ -1,0 +1,10 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`getBoundingBox should return the rounded bounding box 1`] = `
+Array [
+  2.18,
+  41.4,
+  2.22,
+  41.43,
+]
+`;

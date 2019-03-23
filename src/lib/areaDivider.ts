@@ -1,5 +1,6 @@
 // Packages.
 import * as _ from 'lodash';
+import bbox from '@turf/bbox';
 import * as turfHelpers from '@turf/helpers';
 import pointInPolygon from '@turf/boolean-point-in-polygon';
 
@@ -11,16 +12,18 @@ import * as Types from '../types';
 // Code.
 export const areaDivider = (
   areaPolygon: turfHelpers.Feature<turfHelpers.Polygon>,
-  bbox: turfHelpers.BBox
+  boundingBox: turfHelpers.BBox
 ): Types.DividedArea => {
-  const [minX, minY, maxX, maxY] = bbox;
+  const [minX, minY, maxX, maxY] = boundingBox;
   const p = GEOJSON_ZONES_MAXIMUM_PRECISION;
 
   const polygons: Array<turfHelpers.Feature<turfHelpers.Polygon>> = [];
-  const pointsInside: Array<Array<number>> = [];
+  const bboxes: Array<Array<turfHelpers.BBox>> = [];
 
-  for (let x = minX; x < maxX + p; x += p) {
-    for (let y = minY; y < maxY + p; y += p) {
+  for (let x = minX; x < maxX; x += p) {
+    const rowBboxes: Array<turfHelpers.BBox> = [];
+
+    for (let y = minY; y < maxY; y += p) {
       const [a, b, c, d] = [[x, y], [x + p, y], [x + p, y + p], [x, y + p]];
 
       const [i, j, k, l] = [a, b, c, d].map(point =>
@@ -32,15 +35,17 @@ export const areaDivider = (
         continue;
       }
 
+      // we make a polygon with the points
+      const polygon = turfHelpers.polygon([[a, b, c, d, a]]);
+
       if (i && j && k && l) {
-        // if 4 points are inside, add them to the list
-        pointsInside.push(a, b, c, d);
+        // if 4 points are inside, add the bbox of the polygon to the list
+        rowBboxes.push(bbox(polygon));
         continue;
       }
 
       // otherwise, compute intersections and add it to the list
-      const mask = turfHelpers.polygon([[a, b, c, d, a]]);
-      const intersections = getIntersections(areaPolygon, mask);
+      const intersections = getIntersections(areaPolygon, polygon);
 
       if (intersections === null) {
         continue;
@@ -48,9 +53,9 @@ export const areaDivider = (
 
       polygons.push(...intersections);
     }
+
+    bboxes.push(rowBboxes);
   }
 
-  const points = _.uniqWith(pointsInside, _.isEqual);
-
-  return { polygons, points };
+  return { polygons, bboxes };
 };

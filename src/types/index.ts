@@ -9,5 +9,5 @@ export type Result<T, E> = {
 
 export type DividedArea = {
   readonly polygons: Array<turfHelpers.Feature<turfHelpers.Polygon>>;
-  readonly points: Array<Array<number>>;
+  readonly bboxes: Array<Array<turfHelpers.BBox>>;
 };

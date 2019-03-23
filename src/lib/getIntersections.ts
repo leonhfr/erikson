@@ -15,13 +15,13 @@ export const getIntersections = (
     return null;
   }
 
-  const type = turfInvariant.getType(intersection);
+  const featureType = turfInvariant.getType(intersection);
 
-  if (type === 'Polygon') {
+  if (featureType === 'Polygon') {
     return [intersection] as Array<turfHelpers.Feature<turfHelpers.Polygon>>;
   }
 
-  if (type === 'MultiPolygon') {
+  if (featureType === 'MultiPolygon') {
     const zones: Array<turfHelpers.Feature<turfHelpers.Polygon>> = [];
     const { coordinates } = intersection.geometry as turfHelpers.MultiPolygon;
     for (const coords of coordinates) {

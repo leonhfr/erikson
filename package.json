@@ -34,12 +34,14 @@
     "@turf/invariant": "^6.1.2",
     "aws-lambda": "^0.1.2",
     "debug": "^4.0.1",
+    "lodash": "^4.17.11",
     "tslib": "^1.9.3"
   },
   "devDependencies": {
     "@types/aws-lambda": "^8.10.17",
     "@types/debug": "0.0.31",
     "@types/jest": "^23.3.12",
+    "@types/lodash": "^4.14.123",
     "@types/node": "^10.12.0",
     "jest": "^23.6.0",
     "prettier": "^1.15.3",

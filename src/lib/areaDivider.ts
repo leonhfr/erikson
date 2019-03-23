@@ -24,7 +24,7 @@ export const areaDivider = (
   }> = [];
 
   for (let x = minX; x < maxX; x += p) {
-    const rowBboxes: Array<turfHelpers.BBox> = [];
+    const colBboxes: Array<turfHelpers.BBox> = [];
 
     for (let y = minY; y < maxY; y += p) {
       const [a, b, c, d] = [[x, y], [x + p, y], [x + p, y + p], [x, y + p]];
@@ -44,7 +44,7 @@ export const areaDivider = (
 
       if (i && j && k && l) {
         // if 4 points are inside, add the bbox of the polygon to the list of boxes
-        rowBboxes.push(zoneBbox);
+        colBboxes.push(zoneBbox);
         continue;
       }
 
@@ -62,7 +62,7 @@ export const areaDivider = (
       });
     }
 
-    boxes.push(rowBboxes);
+    boxes.push(colBboxes);
   }
 
   return { zones, boxes };

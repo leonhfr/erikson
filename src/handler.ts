@@ -4,6 +4,8 @@ import * as debug from 'debug';
 import { Eratosthenes } from '@scenicroutes/eratosthenes';
 
 // Internal.
+import { areaDivider } from './lib/areaDivider';
+import { getBoundingBox } from './lib/getBoundingBox';
 
 // Code.
 const debugError = debug('erikson:error:handler');
@@ -31,38 +33,40 @@ export const main = async (
     const maybeArea = areaList.ok.filter(area => area.id === event.area);
 
     if (maybeArea.length !== 1) {
-      throw new Error('area not found');
+      throw new Error('Area not found.');
     }
 
     const area = maybeArea[0];
 
     debugVerbose(`area to divide: %o`, area);
 
-    // concave hull
+    // Fetching Geojson
 
+    const areaGeojson = await Eratosthenes.AreaModel.getAreaGeojson(area.file);
+
+    if (areaGeojson instanceof Error) {
+      throw areaGeojson;
+    }
+
+    debugVerbose(`area geojson: %o`, areaGeojson);
+
+    // Bounding Box
+
+    const boundingBox = getBoundingBox(areaGeojson);
+
+    debugVerbose(`area boundingBox: %o`, boundingBox);
+
+    // Area division
+
+    const areaDivision = areaDivider(areaGeojson, boundingBox);
+
+    debugVerbose(`area areaDivision: %o`, areaDivision);
+
+    // make inside zone
     // rectangle decomposition
-
     // make zones for rectangles
-
     // make zones for polygons
-
-    // First we divide it using the areaDivider
-    // We have squares of the minimum dimension
-
-    // Those who also have a a polygon are one the edge
-    // We save them for publishing (1)
-
-    // Concave hull on the remainers
-
-    // Mapping to integers
-
-    // Rectangle decomposition
-
-    // Mapping to coordinates
-
-    // We have bboc-rectangles for the inside (2)
-
-    // We publish (1) and (2)
+    // puting everything to dynamo
 
     return callback(undefined, 'Done');
   } catch (err) {

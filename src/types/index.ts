@@ -8,6 +8,11 @@ export type Result<T, E> = {
 };
 
 export type DividedArea = {
-  readonly polygons: Array<turfHelpers.Feature<turfHelpers.Polygon>>;
-  readonly bboxes: Array<Array<turfHelpers.BBox>>;
+  readonly boxes: Array<Array<turfHelpers.BBox>>;
+  readonly zones: Array<{
+    readonly zone: turfHelpers.Feature<
+      turfHelpers.Polygon | turfHelpers.MultiPolygon
+    >;
+    readonly box: turfHelpers.BBox;
+  }>;
 };

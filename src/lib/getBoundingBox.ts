@@ -18,24 +18,21 @@ export const getBoundingBox = (
 
   const turfBoundingBox = bbox(areaPolygon);
 
-  const [minX, minY, maxX, maxY] = turfBoundingBox.map(x =>
-    flooring(x, GEOJSON_ZONES_MAXIMUM_PRECISION, digits)
-  );
+  const [minX, minY] = turfBoundingBox
+    .slice(0, 2)
+    .map(x => flooring(x, GEOJSON_ZONES_MAXIMUM_PRECISION, digits));
 
-  debugVerbose(`boundingBox: %j`, [
-    minX,
-    minY,
-    maxX + GEOJSON_ZONES_MAXIMUM_PRECISION,
-    maxY + GEOJSON_ZONES_MAXIMUM_PRECISION,
-  ]);
+  const [maxX, maxY] = turfBoundingBox
+    .slice(2, 4)
+    .map(x => ceiling(x, GEOJSON_ZONES_MAXIMUM_PRECISION, digits));
 
-  return [
-    minX,
-    minY,
-    maxX + GEOJSON_ZONES_MAXIMUM_PRECISION,
-    maxY + GEOJSON_ZONES_MAXIMUM_PRECISION,
-  ];
+  debugVerbose(`boundingBox: %j`, [minX, minY, maxX, maxY]);
+
+  return [minX, minY, maxX, maxY];
 };
+
+const ceiling = (x: number, p: number, d: number) =>
+  Number((Math.ceil(x / p) * p).toFixed(d));
 
 const flooring = (x: number, p: number, d: number) =>
   Number((Math.floor(x / p) * p).toFixed(d));

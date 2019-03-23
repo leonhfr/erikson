@@ -1,16 +1,3 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`rectangleDecomposition should return 1`] = `
-Array [
-  Array [
-    Array [
-      0,
-      42,
-    ],
-    Array [
-      2,
-      44,
-    ],
-  ],
-]
-`;
+exports[`rectangleDecomposition should return 1`] = `undefined`;

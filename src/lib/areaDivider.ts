@@ -1,12 +1,12 @@
 // Packages.
 import * as _ from 'lodash';
 import bbox from '@turf/bbox';
-import * as turfHelpers from '@turf/helpers';
 import pointInPolygon from '@turf/boolean-point-in-polygon';
+import intersect from '@turf/intersect';
+import * as turfHelpers from '@turf/helpers';
 
 // Internal.
 import { GEOJSON_ZONES_MAXIMUM_PRECISION } from '../constants';
-import { getIntersections } from './getIntersections';
 import * as Types from '../types';
 
 // Code.
@@ -17,8 +17,11 @@ export const areaDivider = (
   const [minX, minY, maxX, maxY] = boundingBox;
   const p = GEOJSON_ZONES_MAXIMUM_PRECISION;
 
-  const polygons: Array<turfHelpers.Feature<turfHelpers.Polygon>> = [];
-  const bboxes: Array<Array<turfHelpers.BBox>> = [];
+  const boxes: Array<Array<turfHelpers.BBox>> = [];
+  const zones: Array<{
+    zone: turfHelpers.Feature<turfHelpers.Polygon | turfHelpers.MultiPolygon>;
+    box: turfHelpers.BBox;
+  }> = [];
 
   for (let x = minX; x < maxX; x += p) {
     const rowBboxes: Array<turfHelpers.BBox> = [];
@@ -36,26 +39,31 @@ export const areaDivider = (
       }
 
       // we make a polygon with the points
-      const polygon = turfHelpers.polygon([[a, b, c, d, a]]);
+      const zonePolygon = turfHelpers.polygon([[a, b, c, d, a]]);
+      const zoneBbox = bbox(zonePolygon);
 
       if (i && j && k && l) {
-        // if 4 points are inside, add the bbox of the polygon to the list
-        rowBboxes.push(bbox(polygon));
+        // if 4 points are inside, add the bbox of the polygon to the list of boxes
+        rowBboxes.push(zoneBbox);
         continue;
       }
 
-      // otherwise, compute intersections and add it to the list
-      const intersections = getIntersections(areaPolygon, polygon);
+      // otherwise, compute intersection and add it to the list of zones
+      const intersection = intersect(areaPolygon, zonePolygon);
 
-      if (intersections === null) {
+      // No intersection
+      if (!intersection) {
         continue;
       }
 
-      polygons.push(...intersections);
+      zones.push({
+        zone: intersection,
+        box: zoneBbox,
+      });
     }
 
-    bboxes.push(rowBboxes);
+    boxes.push(rowBboxes);
   }
 
-  return { polygons, bboxes };
+  return { zones, boxes };
 };

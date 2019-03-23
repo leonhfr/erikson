@@ -1,22 +1,18 @@
 // Packages.
-// import * as debug from 'debug';
+import * as _ from 'lodash';
 import * as turfHelpers from '@turf/helpers';
 import pointInPolygon from '@turf/boolean-point-in-polygon';
 
 // Internal.
 import { GEOJSON_ZONES_MAXIMUM_PRECISION } from '../constants';
 import { getIntersections } from './getIntersections';
+import * as Types from '../types';
 
 // Code.
-// const debugVerbose = debug('erikson:verbose:areaDivider');
-
 export const areaDivider = (
   areaPolygon: turfHelpers.Feature<turfHelpers.Polygon>,
   bbox: turfHelpers.BBox
-): {
-  polygons: Array<turfHelpers.Feature<turfHelpers.Polygon>>;
-  points: Array<Array<number>>;
-} => {
+): Types.DividedArea => {
   const [minX, minY, maxX, maxY] = bbox;
   const p = GEOJSON_ZONES_MAXIMUM_PRECISION;
 
@@ -54,6 +50,7 @@ export const areaDivider = (
     }
   }
 
-  // filter points for duplicates
-  return { polygons, points: pointsInside };
+  const points = _.uniqWith(pointsInside, _.isEqual);
+
+  return { polygons, points };
 };

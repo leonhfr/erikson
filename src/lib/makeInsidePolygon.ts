@@ -19,7 +19,7 @@ export const makeInsidePolygon = (
   for (const colBboxes of boxes) {
     const mergedBoxes = mergeBoxes(colBboxes);
 
-    if (mergeBoxes.length === 1) {
+    if (mergedBoxes.length === 1) {
       polygons.push(Geometry.bboxToPolygon(mergedBoxes[0]));
       continue;
     }

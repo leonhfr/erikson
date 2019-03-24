@@ -73,7 +73,7 @@ export const main = async (
     const borderZonesPromises = areaDivision.zones.map(async zone => {
       const maybeZone = Wittgenstein.Zone.create({
         id: uuid(),
-        area,
+        area: area.id,
         bbox: zone.box,
         zone: zone.zone,
       });
@@ -111,7 +111,7 @@ export const main = async (
     const insideZonesPromises = boxes.map(async box => {
       const maybeZone = Wittgenstein.Zone.create({
         id: uuid(),
-        area,
+        area: area.id,
         bbox: box,
       });
 

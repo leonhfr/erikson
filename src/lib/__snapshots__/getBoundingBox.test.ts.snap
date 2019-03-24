@@ -1,5 +1,14 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`getBoundingBox should return the bounding box for a big polygon 1`] = `
+Array [
+  2.17,
+  41.38,
+  2.23,
+  41.44,
+]
+`;
+
 exports[`getBoundingBox should return the rounded bounding box 1`] = `
 Array [
   2.18,

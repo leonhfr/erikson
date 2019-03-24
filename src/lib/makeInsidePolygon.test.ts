@@ -27,7 +27,6 @@ describe('makeInsidePolygon', () => {
       [[2, 2, 3, 3], [2, 4, 3, 6], [2, 6, 3, 7]],
     ];
     const result = makeInsidePolygon(boxes);
-    console.log(JSON.stringify(result));
     expect(result).toMatchSnapshot();
   });
 });

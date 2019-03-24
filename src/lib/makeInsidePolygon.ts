@@ -1,20 +1,16 @@
 // Packages.
 import * as _ from 'lodash';
-import * as turfHelpers from '@turf/helpers';
 import union from '@turf/union';
 
 // Internal.
 import { Geometry } from './Geometry';
+import * as Types from '../types';
 
 // Code.
 export const makeInsidePolygon = (
-  boxes: Array<Array<turfHelpers.BBox>>
-):
-  | turfHelpers.Feature<turfHelpers.Polygon | turfHelpers.MultiPolygon>
-  | undefined => {
-  const polygons: Array<
-    turfHelpers.Feature<turfHelpers.Polygon | turfHelpers.MultiPolygon>
-  > = [];
+  boxes: Array<Array<Types.BoundingBox>>
+): Types.MultiPolygon | undefined => {
+  const polygons: Array<Types.MultiPolygon> = [];
 
   for (const colBboxes of boxes) {
     const mergedBoxes = mergeBoxes(colBboxes);
@@ -30,15 +26,15 @@ export const makeInsidePolygon = (
   return _.reduce(polygons, (acc, val) => union(acc, val));
 };
 
-export const mergeBoxes = (boxes: Array<turfHelpers.BBox>) => {
-  let accumulator: Array<turfHelpers.BBox> = [];
+export const mergeBoxes = (boxes: Array<Types.BoundingBox>) => {
+  let accumulator: Array<Types.BoundingBox> = [];
   return _.reduce(boxes, mergeIteratee, accumulator);
 };
 
 export const mergeIteratee = (
-  boxes: Array<turfHelpers.BBox>,
-  value: turfHelpers.BBox
-): Array<turfHelpers.BBox> => {
+  boxes: Array<Types.BoundingBox>,
+  value: Types.BoundingBox
+): Array<Types.BoundingBox> => {
   if (!boxes.length) {
     return [value];
   }
@@ -49,7 +45,7 @@ export const mergeIteratee = (
   if (minY === lastBbox[3]) {
     return [
       ...boxes.slice(0, -1),
-      [minX, lastBbox[1], maxX, maxY] as turfHelpers.BBox,
+      [minX, lastBbox[1], maxX, maxY] as Types.BoundingBox,
     ];
   }
 

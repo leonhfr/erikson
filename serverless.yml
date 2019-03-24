@@ -36,7 +36,7 @@ provider:
       Resource:
         - arn:aws:s3:::scenicroutes-*
 functions:
-  scheduler:
+  divider:
     handler: build/handler.main
 
 plugins:

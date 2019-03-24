@@ -1,39 +1,42 @@
 // Packages.
 import * as _ from 'lodash';
 import bbox from '@turf/bbox';
+import * as debug from 'debug';
 import pointInPolygon from '@turf/boolean-point-in-polygon';
 import intersect from '@turf/intersect';
 import * as turfHelpers from '@turf/helpers';
 
 // Internal.
 import { GEOJSON_ZONES_MAXIMUM_PRECISION } from '../constants';
+import { rounding } from './rounding';
 import * as Types from '../types';
 
 // Code.
+const debugError = debug('erikson:error:areaDivider');
+
 export const areaDivider = (
-  areaPolygon: turfHelpers.Feature<turfHelpers.Polygon>,
-  boundingBox: turfHelpers.BBox
+  areaPolygon: Types.Polygon,
+  boundingBox: Types.BoundingBox
 ): Types.DividedArea => {
   const [minX, minY, maxX, maxY] = boundingBox;
   const p = GEOJSON_ZONES_MAXIMUM_PRECISION;
 
-  const boxes: Array<Array<turfHelpers.BBox>> = [];
-  const zones: Array<{
-    zone: turfHelpers.Feature<turfHelpers.Polygon | turfHelpers.MultiPolygon>;
-    box: turfHelpers.BBox;
-  }> = [];
+  const boxes: Array<Array<Types.BoundingBox>> = [];
+  const zones: Array<Types.ZoneGeometry> = [];
 
   for (let x = minX; x < maxX; x += p) {
-    const colBboxes: Array<turfHelpers.BBox> = [];
+    const colBboxes: Array<Types.BoundingBox> = [];
 
     for (let y = minY; y < maxY; y += p) {
-      const [a, b, c, d] = [[x, y], [x + p, y], [x + p, y + p], [x, y + p]];
+      const [a, b, c, d] = [[x, y], [x + p, y], [x + p, y + p], [x, y + p]].map(
+        a => a.map(rounding)
+      );
 
       const [i, j, k, l] = [a, b, c, d].map(point =>
         pointInPolygon(point, areaPolygon)
       );
 
-      if (!i || !j || !k || !l) {
+      if (!i && !j && !k && !l) {
         // if 4 points are outside, continue
         continue;
       }
@@ -52,7 +55,10 @@ export const areaDivider = (
       const intersection = intersect(areaPolygon, zonePolygon);
 
       // No intersection
+      // We ignore the test case as this will not happen
+      /*istanbul ignore next*/
       if (!intersection) {
+        debugError(`intersect returned null for %o`, zonePolygon);
         continue;
       }
 
@@ -62,7 +68,9 @@ export const areaDivider = (
       });
     }
 
-    boxes.push(colBboxes);
+    if (colBboxes.length) {
+      boxes.push(colBboxes);
+    }
   }
 
   return { zones, boxes };

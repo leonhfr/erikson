@@ -3,7 +3,6 @@ import * as AWSLambda from 'aws-lambda';
 import * as debug from 'debug';
 import { Eratosthenes } from '@scenicroutes/eratosthenes';
 import * as Wittgenstein from '@scenicroutes/wittgenstein';
-import * as turfHelpers from '@turf/helpers';
 import * as turfInvariant from '@turf/invariant';
 import { v4 as uuid } from 'uuid';
 
@@ -12,6 +11,7 @@ import { areaDivider } from './lib/areaDivider';
 import { getBoundingBox } from './lib/getBoundingBox';
 import { makeInsidePolygon } from './lib/makeInsidePolygon';
 import { rectangleDecomposition } from './lib/rectangleDecomposition';
+import * as Types from './types';
 
 // Code.
 const debugError = debug('erikson:error:handler');
@@ -106,9 +106,7 @@ export const main = async (
 
     // Rectangle decomposition
 
-    const boxes = rectangleDecomposition(insidePolygon as turfHelpers.Feature<
-      turfHelpers.Polygon
-    >);
+    const boxes = rectangleDecomposition(insidePolygon as Types.Polygon);
 
     const insideZonesPromises = boxes.map(async box => {
       const maybeZone = Wittgenstein.Zone.create({

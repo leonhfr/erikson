@@ -3,11 +3,16 @@ import * as turfHelpers from '@turf/helpers';
 
 // Internal.
 import { getBoundingBox } from './getBoundingBox';
+import * as Mocks from '../mocks';
 
 // Code.
 describe('getBoundingBox', () => {
   it('should return the rounded bounding box', () => {
     const result = getBoundingBox(polygon);
+    expect(result).toMatchSnapshot();
+  });
+  it('should return the bounding box for a big polygon', () => {
+    const result = getBoundingBox(Mocks.santMarti);
     expect(result).toMatchSnapshot();
   });
 });

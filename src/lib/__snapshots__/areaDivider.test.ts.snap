@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`getBoundingBox should return the bounding box for a big polygon 1`] = `
+exports[`areaDivider should return the expected output 1`] = `
 Object {
   "boxes": Array [
     Array [

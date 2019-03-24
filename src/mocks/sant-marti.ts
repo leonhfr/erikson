@@ -1,8 +1,10 @@
-// Packages.
-import * as turfHelpers from '@turf/helpers';
+// Internal.
+import * as Types from '../types';
 
 // Definition
-export const santMarti: turfHelpers.Feature<turfHelpers.Polygon> = {
+export const santMartiBox: Types.BoundingBox = [2.17, 41.38, 2.23, 41.44];
+
+export const santMartiPolygon: Types.Polygon = {
   type: 'Feature',
   properties: {
     C_Distri: '10',
